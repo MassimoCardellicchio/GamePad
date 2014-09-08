@@ -1,0 +1,71 @@
+﻿Version=2.5
+IconFile=
+NumberOfModules=1
+Module1=GamePad
+ModuleVisible1=1
+Package=anywheresoftware.b4a.samples.gamepad
+DoNotOverwriteManifest=False
+ManifestCode=
+UserTypesHint=joystick,GamePad
+NumberOfFiles=1
+File1=arrows.png
+NumberOfLibraries=2
+Library1=core
+Library2=gestures
+@EndOfDesignText@
+#Region Module Attributes
+	#FullScreen: False
+	#IncludeTitle: True
+	#ApplicationLabel: GamePad
+	#VersionCode: 1
+	#VersionName: 
+	#SupportedOrientations: landscape
+	#CanInstallToExternalStorage: False
+#End Region
+
+'Activity module
+Sub Process_Globals
+	Dim timer1 As Timer
+End Sub
+
+Sub Globals
+	Dim gd As GamePad
+	Dim movement As Float
+	movement = 3dip
+	Dim cvs As Canvas
+	
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	If FirstTime Then
+		timer1.Initialize("timer1", 30)
+	End If
+	gd.Initialize
+	Dim length, rightPadding, leftPadding, bottomPadding As Int
+	length = 200dip 'also the panel's height
+	rightPadding = 70dip
+	leftPadding = 20dip
+	bottomPadding = 20dip
+	gd.AddToActivity (Activity, leftPadding, 100%y - bottomPadding - length, _
+		100%x - rightPadding - leftPadding, length)
+	cvs.Initialize(Activity)
+	
+End Sub
+
+Sub Timer1_Tick
+	'HandleValue(lrect, gd.GetJoyValue, Colors.Red)
+End Sub
+
+'Sub HandleValue(r As Rect, val As Int, color As Int)
+'
+'End Sub
+
+Sub Activity_Resume
+	timer1.Enabled = True
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+	timer1.Enabled = False
+End Sub
+
+
