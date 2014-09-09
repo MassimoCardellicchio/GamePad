@@ -49,7 +49,7 @@ Sub Activity_Create(FirstTime As Boolean)
 End Sub
 
 Sub Timer1_Tick
-	gd.GetJoyValue
+	'gd.GetJoyValue
 	'HandleValue(lrect, gd.GetJoyValue, Colors.Red)
 End Sub
 
