@@ -5,26 +5,22 @@ Version=2.5
 Sub Class_Globals
 	Private ges As Gestures
 	Private pnl As Panel
-	Private cvs As Canvas
-	'Dim Stick As Bitmap
-
+	Private cvs As Canvas 
 	Type joystick(DestRect As Rect, x As Float, y As Float, zeroX As Float, zeroY As Float, color As Int)
 	Dim joy As joystick
-	Private radius As Int
-	radius = 50dip
+	Private radius As Int: radius = 50dip 'radius of the stick	
+	Dim r_max As Int: r_max = 35dip 'max distance between the center of the stick and the center of the pad
+	Dim r As Float: r = 0 'current distance between the center of the stick and the center of the pad
+	Dim Dx As Float: Dx = 0
+	Dim Dy As Float: Dy = 0
 End Sub
 
 Public Sub Initialize
 	pnl.Initialize("")
-'	Dim cd As ColorDrawable
-'	cd.Initialize ( Colors.ARGB( 200, 0, 0, 0) , 5dip )
-'	pnl.Background = cd 
 	ges.SetOnTouchListener(pnl, "pnl_multitouch")
 	joy.Initialize
 	joy.color = Colors.ARGB(115, 112, 112, 100)
 '	joy.color = Colors.RGB(115, 112, 112)
-	'Canvas1.DrawDrawable(GD,Rect1)
-	'Stick.Initialize(File.DirAssets, "stick.png")
 End Sub
 
 Public Sub AddToActivity(act As Activity, vLeft As Int, vTop As Int, vWidth As Int, vHeight As Int)
@@ -32,35 +28,19 @@ Public Sub AddToActivity(act As Activity, vLeft As Int, vTop As Int, vWidth As I
 	iv1.Initialize("")
 	iv1.Bitmap = LoadBitmap(File.DirAssets, "ffjoy.png")
 	iv1.Gravity = Gravity.FILL	
-	act.AddView(iv1, vLeft, vTop, vHeight, vHeight)
-	
-'	Dim iv2 As ImageView
-'	iv2.Initialize("")
-'	iv2.Bitmap = LoadBitmap(File.DirAssets, "stick.png")
-'	iv2.Gravity = Gravity.FILL
-	
-	
+	act.AddView(iv1, vLeft, vTop, vHeight, vHeight)	
 	act.AddView(pnl, vLeft, vTop, vWidth, vHeight)
 	cvs.Initialize(pnl)
-	
 	joy.zeroX = pnl.Height / 2
 	joy.zeroY = pnl.Height / 2
-'	Dim v2Height As Int: v2Height = 100
-'	act.AddView(iv2, joy.zeroX, joy.z, v2Height, v2Height)
-    'DestRect.Initialize(10dip, 10dip, joy.zeroX, joy.zeroY)
-	MoveJoystick(joy.zeroX, joy.zeroY, joy)
-	
+	MoveJoystick(joy.zeroX, joy.zeroY, joy)	
 	pnl.Invalidate
 End Sub
 
 Private Sub pnl_multitouch(View As Object, pointerID As Int, action As Int, x As Float, Y As Float) As Boolean
 	Dim foundLeft As Boolean
 	For i = 0 To ges.GetPointerCount - 1
-		Log(" ---------------- ")
-		Log("i = "&NumberFormat(i, 1, 0))
-		Log("X = "&NumberFormat(ges.GetX(i), 1, 0))
-		Log("Y = "&NumberFormat(ges.GetY(i), 1, 0))
-		If (action = ges.ACTION_UP OR action = ges.ACTION_POINTER_UP) AND _
+		If (action = ges.ACTION_UP OR action = ges.ACTION_POINTER_UP OR action = ges.ACTION_DOWN) AND _
 			ges.GetPointerID(i) = pointerID Then
 				Continue
 		End If
@@ -68,11 +48,9 @@ Private Sub pnl_multitouch(View As Object, pointerID As Int, action As Int, x As
 		Dim gx, gy As Float
 		gx = Max(0, Min(ges.GetX(i), pnl.Width))
 		gy = Max(0, Min(ges.GetY(i), pnl.Height))
-		'If gx < pnl.Width / 2 Then
-			gx = Min(gx, pnl.Height)
-			foundLeft = True
-			MoveJoystick(gx, gy, joy)
-		'End If
+		'gx = Min(gx, pnl.Height)
+		foundLeft = True
+		MoveJoystick(gx, gy, joy)
 	Next
 	If Not(foundLeft) Then MoveJoystick(joy.zeroX, joy.zeroY, joy)
 	pnl.Invalidate
@@ -80,23 +58,46 @@ Private Sub pnl_multitouch(View As Object, pointerID As Int, action As Int, x As
 End Sub
 
 Private Sub MoveJoystick(x As Float, y As Float, j As joystick)
-	cvs.DrawCircle(j.x, j.y, radius, Colors.Transparent, True, 0) 'cancella la traccia precedente
-	Dim valuex, valuey As Float
-	valuex = x - j.zeroX
-	valuey = y - j.zeroY
-	'If Abs(valuex) > Abs(valuey) Then y = j.zeroY Else x = j.zeroX
-	If j.zeroX == x AND j.zeroY == y Then valuex = x: valuey = y 
-	j.x = x
-	j.y = y
+	cvs.DrawCircle(j.x, j.y, radius, Colors.Transparent, True, 0) 'delete previous track
+	Dx = x - j.zeroX
+	Dy = j.zeroY - y
+	r = ComputeDist(x,y,j)	
+	Dim angle As Float: angle = ComputeAngle(Dx,Dy)
+	If r < r_max Then
+		j.x = x
+		j.y = y
+	Else
+		j.x = r_max*Cos(angle)+j.zeroX
+		j.y = -r_max*Sin(angle)+j.zeroY
+	End If	
 	cvs.DrawCircle(j.x, j.y, radius, j.color, True, 0)
-	'cvs.DrawBitmap(Stick, Null, DestRect) 'draws the bitmap to the destination rectangle.
 End Sub
 
-Public Sub GetJoyValue As Int
-	Return GetValue(joy)
+Private Sub ComputeDist(x As Float, y As Float, j As joystick) As Float
+	Return Sqrt(Power(x - j.zeroX, 2)+Power(y - j.zeroY, 2))
 End Sub
 
-
-Private Sub GetValue(j As joystick) As Int
-
+Private Sub ComputeAngle(x As Float, y As Float) As Float
+	If x > 0 AND y >= 0 Then
+		Return ATan(y/x)
+	Else If x > 0 AND y < 0 Then
+		Return ATan(y/x) + 2*cPI
+	Else If x < 0 Then
+		Return ATan(y/x) + cPI	
+	Else If x == 0 AND y > 0 Then
+		Return cPI/2	
+	Else If x == 0 AND y < 0 Then
+		Return 3*cPI/2	
+	Else 
+		Return 0
+	End If	
 End Sub
+Public Sub GetJoyValue As Int()
+	Dim v() As Int
+	v(1) = r/r_max 'normalized linear velocity [m/s]
+	v(2) = ATan2(Dx,Dy) 'angular vel [rad/s]
+	Log("v_lin = "&NumberFormat(v(1), 1, 3))
+	Log("v_ang = "&NumberFormat(v(2), 1, 3))
+	Return v
+End Sub
+

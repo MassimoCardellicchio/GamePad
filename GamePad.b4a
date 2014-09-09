@@ -30,10 +30,7 @@ End Sub
 
 Sub Globals
 	Dim gd As GamePad
-	Dim movement As Float
-	movement = 3dip
 	Dim cvs As Canvas
-	
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -49,10 +46,10 @@ Sub Activity_Create(FirstTime As Boolean)
 	gd.AddToActivity (Activity, leftPadding, 100%y - bottomPadding - length, _
 		100%x - rightPadding - leftPadding, length)
 	cvs.Initialize(Activity)
-	
 End Sub
 
 Sub Timer1_Tick
+	gd.GetJoyValue
 	'HandleValue(lrect, gd.GetJoyValue, Colors.Red)
 End Sub
 
