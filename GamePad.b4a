@@ -31,6 +31,7 @@ End Sub
 Sub Globals
 	Dim gd As GamePad
 	Dim cvs As Canvas
+	Dim joy_values(2) As Float 
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
@@ -44,18 +45,15 @@ Sub Activity_Create(FirstTime As Boolean)
 	leftPadding = 20dip
 	bottomPadding = 20dip
 	gd.AddToActivity (Activity, leftPadding, 100%y - bottomPadding - length, _
-		100%x - rightPadding - leftPadding, length)
+		length, length)
 	cvs.Initialize(Activity)
 End Sub
 
 Sub Timer1_Tick
-	'gd.GetJoyValue
-	'HandleValue(lrect, gd.GetJoyValue, Colors.Red)
+	joy_values = gd.GetJoyValue
+	Log("v_lin = "&NumberFormat(joy_values(0), 0, 3))
+	Log("v_ang = "&NumberFormat(joy_values(1), 0, 3))
 End Sub
-
-'Sub HandleValue(r As Rect, val As Int, color As Int)
-'
-'End Sub
 
 Sub Activity_Resume
 	timer1.Enabled = True

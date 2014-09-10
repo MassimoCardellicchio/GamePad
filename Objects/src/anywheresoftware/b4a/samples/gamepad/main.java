@@ -226,51 +226,52 @@ public anywheresoftware.b4a.keywords.Common __c = null;
 public static anywheresoftware.b4a.objects.Timer _timer1 = null;
 public gamepad _gd = null;
 public anywheresoftware.b4a.objects.drawable.CanvasWrapper _cvs = null;
+public static float[] _joy_values = null;
 public static String  _activity_create(boolean _firsttime) throws Exception{
 int _length = 0;
 int _rightpadding = 0;
 int _leftpadding = 0;
 int _bottompadding = 0;
- //BA.debugLineNum = 21;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
- //BA.debugLineNum = 22;BA.debugLine="If FirstTime Then";
+ //BA.debugLineNum = 22;BA.debugLine="Sub Activity_Create(FirstTime As Boolean)";
+ //BA.debugLineNum = 23;BA.debugLine="If FirstTime Then";
 if (_firsttime) { 
- //BA.debugLineNum = 23;BA.debugLine="timer1.Initialize(\"timer1\", 30)";
+ //BA.debugLineNum = 24;BA.debugLine="timer1.Initialize(\"timer1\", 30)";
 _timer1.Initialize(processBA,"timer1",(long)(30));
  };
- //BA.debugLineNum = 25;BA.debugLine="gd.Initialize";
+ //BA.debugLineNum = 26;BA.debugLine="gd.Initialize";
 mostCurrent._gd._initialize(mostCurrent.activityBA);
- //BA.debugLineNum = 26;BA.debugLine="Dim length, rightPadding, leftPadding, bottomPadding As Int";
+ //BA.debugLineNum = 27;BA.debugLine="Dim length, rightPadding, leftPadding, bottomPadding As Int";
 _length = 0;
 _rightpadding = 0;
 _leftpadding = 0;
 _bottompadding = 0;
- //BA.debugLineNum = 27;BA.debugLine="length = 200dip 'also the panel's height";
+ //BA.debugLineNum = 28;BA.debugLine="length = 200dip 'also the panel's height";
 _length = anywheresoftware.b4a.keywords.Common.DipToCurrent((int)(200));
- //BA.debugLineNum = 28;BA.debugLine="rightPadding = 70dip";
+ //BA.debugLineNum = 29;BA.debugLine="rightPadding = 70dip";
 _rightpadding = anywheresoftware.b4a.keywords.Common.DipToCurrent((int)(70));
- //BA.debugLineNum = 29;BA.debugLine="leftPadding = 20dip";
+ //BA.debugLineNum = 30;BA.debugLine="leftPadding = 20dip";
 _leftpadding = anywheresoftware.b4a.keywords.Common.DipToCurrent((int)(20));
- //BA.debugLineNum = 30;BA.debugLine="bottomPadding = 20dip";
+ //BA.debugLineNum = 31;BA.debugLine="bottomPadding = 20dip";
 _bottompadding = anywheresoftware.b4a.keywords.Common.DipToCurrent((int)(20));
- //BA.debugLineNum = 31;BA.debugLine="gd.AddToActivity (Activity, leftPadding, 100%y - bottomPadding - length, _ 		100%x - rightPadding - leftPadding, length)";
-mostCurrent._gd._addtoactivity(mostCurrent._activity,_leftpadding,(int)(anywheresoftware.b4a.keywords.Common.PerYToCurrent((float)(100),mostCurrent.activityBA)-_bottompadding-_length),(int)(anywheresoftware.b4a.keywords.Common.PerXToCurrent((float)(100),mostCurrent.activityBA)-_rightpadding-_leftpadding),_length);
- //BA.debugLineNum = 33;BA.debugLine="cvs.Initialize(Activity)";
+ //BA.debugLineNum = 32;BA.debugLine="gd.AddToActivity (Activity, leftPadding, 100%y - bottomPadding - length, _ 		length, length)";
+mostCurrent._gd._addtoactivity(mostCurrent._activity,_leftpadding,(int)(anywheresoftware.b4a.keywords.Common.PerYToCurrent((float)(100),mostCurrent.activityBA)-_bottompadding-_length),_length,_length);
+ //BA.debugLineNum = 34;BA.debugLine="cvs.Initialize(Activity)";
 mostCurrent._cvs.Initialize((android.view.View)(mostCurrent._activity.getObject()));
- //BA.debugLineNum = 34;BA.debugLine="End Sub";
+ //BA.debugLineNum = 35;BA.debugLine="End Sub";
 return "";
 }
 public static String  _activity_pause(boolean _userclosed) throws Exception{
- //BA.debugLineNum = 48;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
- //BA.debugLineNum = 49;BA.debugLine="timer1.Enabled = False";
+ //BA.debugLineNum = 47;BA.debugLine="Sub Activity_Pause (UserClosed As Boolean)";
+ //BA.debugLineNum = 48;BA.debugLine="timer1.Enabled = False";
 _timer1.setEnabled(anywheresoftware.b4a.keywords.Common.False);
- //BA.debugLineNum = 50;BA.debugLine="End Sub";
+ //BA.debugLineNum = 49;BA.debugLine="End Sub";
 return "";
 }
 public static String  _activity_resume() throws Exception{
- //BA.debugLineNum = 44;BA.debugLine="Sub Activity_Resume";
- //BA.debugLineNum = 45;BA.debugLine="timer1.Enabled = True";
+ //BA.debugLineNum = 43;BA.debugLine="Sub Activity_Resume";
+ //BA.debugLineNum = 44;BA.debugLine="timer1.Enabled = True";
 _timer1.setEnabled(anywheresoftware.b4a.keywords.Common.True);
- //BA.debugLineNum = 46;BA.debugLine="End Sub";
+ //BA.debugLineNum = 45;BA.debugLine="End Sub";
 return "";
 }
 
@@ -297,7 +298,10 @@ public static String  _globals() throws Exception{
 mostCurrent._gd = new gamepad();
  //BA.debugLineNum = 18;BA.debugLine="Dim cvs As Canvas";
 mostCurrent._cvs = new anywheresoftware.b4a.objects.drawable.CanvasWrapper();
- //BA.debugLineNum = 19;BA.debugLine="End Sub";
+ //BA.debugLineNum = 19;BA.debugLine="Dim joy_values(2) As Float";
+_joy_values = new float[(int)(2)];
+;
+ //BA.debugLineNum = 20;BA.debugLine="End Sub";
 return "";
 }
 public static String  _process_globals() throws Exception{
@@ -308,8 +312,14 @@ _timer1 = new anywheresoftware.b4a.objects.Timer();
 return "";
 }
 public static String  _timer1_tick() throws Exception{
- //BA.debugLineNum = 36;BA.debugLine="Sub Timer1_Tick";
- //BA.debugLineNum = 38;BA.debugLine="End Sub";
+ //BA.debugLineNum = 37;BA.debugLine="Sub Timer1_Tick";
+ //BA.debugLineNum = 38;BA.debugLine="joy_values = gd.GetJoyValue";
+_joy_values = mostCurrent._gd._getjoyvalue();
+ //BA.debugLineNum = 39;BA.debugLine="Log(\"v_lin = \"&NumberFormat(joy_values(0), 0, 3))";
+anywheresoftware.b4a.keywords.Common.Log("v_lin = "+anywheresoftware.b4a.keywords.Common.NumberFormat(_joy_values[(int)(0)],(int)(0),(int)(3)));
+ //BA.debugLineNum = 40;BA.debugLine="Log(\"v_ang = \"&NumberFormat(joy_values(1), 0, 3))";
+anywheresoftware.b4a.keywords.Common.Log("v_ang = "+anywheresoftware.b4a.keywords.Common.NumberFormat(_joy_values[(int)(1)],(int)(0),(int)(3)));
+ //BA.debugLineNum = 41;BA.debugLine="End Sub";
 return "";
 }
 }
